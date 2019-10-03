@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Test Datatable</title>
+        <script
+			  src="https://code.jquery.com/jquery-3.4.1.min.js"
+			  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+			  crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" >
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" ></script>
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="dataPage" class="col-md-6 col-sm-12">
+                <h4>Data Kurs (all)</h4>
+                <table id="kurs-table" class="display" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th>Kode Valas</th>
+                            <th>Kurs IDR</th>
+                            <th>Jenis</th>
+                            <th>Valid Dari</th>
+                            <th>Valid Sampai</th>
+                        </tr>
+                    </thead>
+                </table>
+                <button class="btn-sm btn-primary">Some thing</button>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <h4>Data Penumpang</h4>
+                <table id="penumpang-table" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Tgl Lahir</th>
+                            <th>No Paspor</th>
+                            <th>Kebangsaan</th>
+                            <th>Pekerjaan</th>
+                        </tr>
+                        <tbody>
+
+                        </tbody>
+                    </thead>
+                </table>
+                <button class="btn-sm btn-primary">Some other thing</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-md-12">
+                <h2>Input Data CD</h2>
+                <p>
+                    <label for="penumpang" class="col-lg-2">Penumpang</label>
+                    <select id="penumpang" class="col-lg-4">
+
+                    </select>
+                </p>
+
+                <p>
+                    <label for="declare-flag" class="col-lg-2">Flag Deklarasi</label>
+                    <select id="declare-flag" class="col-lg-4" name="declare_flags[]" multiple="multiple">
+                        <option value="KARANTINA">Karantina</option>
+                        <option value="NARKOTIKA">Narkotika</option>
+                        <option value="UANG">Uang</option>
+                        <option value="BKC">Barang Kena Cukai</option>
+                        <option value="KOMERSIL">Barang Dagangan</option>
+                        <option value="IMPOR_UNTUK_DIPAKAI" selected>Impor Untuk Dipakai</option>
+                    </select>
+                </p>
+                
+            </div>
+        </div>
+    </body>
+
+    <script>
+        function setAuth(xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer token_pdtt');
+        }
+
+        $(function() {
+            // select2
+            $('#penumpang').select2({
+                ajax: {
+                    delay: 200,
+                    url: 'http://apishinta.test/penumpang',
+                    type : 'GET',
+                    data: function (params) {
+                        console.log(params);
+                        var query = {
+                            q: params.term,
+                        }
+                        return query;
+                    },
+                    processResults: function(data) {
+                        console.log(data);
+
+                        var transformed = $.map(data.data, function (elem) {
+                            elem.id = elem.id;
+                            elem.text = elem.nama;
+
+                            return elem;
+                        });
+                        return {
+                            results: transformed
+                        };
+                    },
+                    beforeSend : setAuth
+                }
+            });
+            $('#declare-flag').select2();
+
+            // untuk data kurs
+            $('#kurs-table').DataTable({
+                'ajax'  : {
+                    'url' : "http://apishinta.test/kurs",
+                    'type' : 'GET',
+                    'processData' : false
+                    },
+                'columns' : [
+                    { 'data': 'kode_valas', 'orderable' : false },
+                    { 'data': 'kurs_idr', 'orderable' : false },
+                    { 'data': 'jenis', 'orderable' : false },
+                    { 'data': 'tanggal_awal', 'orderable' : false },
+                    { 'data': 'tanggal_akhir', 'orderable' : false },
+                ],
+                'searching' : false
+            });
+
+            // untuk data penumpang
+            var tPenumpang = $('#penumpang-table').DataTable({
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "nama/asal/no paspor/job..."
+                },
+                'ajax' : {
+                    'url' : 'http://apishinta.test/penumpang',
+                    'type': 'GET',
+                    'crossDomain' : true,
+                    'data' : function (d) {
+                        // return $.extend( {}, d, {
+                        //     'q' : $('#penumpang-table_filter input').val();
+                        // });
+                        console.log(d);                            
+                        var page = Math.ceil(d.start / d.length) + 1;
+                        console.log("accessing page: " + page);
+
+                        return "q=" + d.search.value+"&number="+d.length+"&page=" + page;
+                    },
+                    'dataType' : 'json',
+                    'processData' : false,
+                    'beforeSend' : setAuth,
+                    'error' : function(a, b, c) {
+                        console.log(a);
+                        // console.log(c);
+                        // alert(a.responseText);
+                        alert(a.responseJSON.error.message);
+
+                        $('#penumpang-table_processing').hide();
+                    }
+                },
+                'columns' : [
+                    { 'data' : 'nama', 'orderable' : false },
+                    { 'data' : 'tgl_lahir', 'orderable' : false },
+                    { 'data' : 'no_paspor', 'orderable' : false },
+                    { 'data' : 'kebangsaan', 'orderable' : false },
+                    { 'data' : 'pekerjaan', 'orderable' : false }
+
+                ],
+                'processing' : true,
+                'serverSide' : true
+            });
+        });
+    </script>
+
+</html>
