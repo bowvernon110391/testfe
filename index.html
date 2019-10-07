@@ -60,11 +60,16 @@
         </div>
 
         <div class="container">
+            <hr>
+        </div>
+        
+
+        <div class="container">
             <div class="col-md-12">
                 <h2>Input Data CD</h2>
                 <p>
                     <label for="penumpang" class="col-lg-2">Penumpang</label>
-                    <select id="penumpang" class="col-lg-3">
+                    <select id="penumpang" class="col-lg-4">
 						
                     </select>
                     <button class="btn-sm btn-primary">+</button>
@@ -91,14 +96,29 @@
             xhr.setRequestHeader('Authorization', 'Bearer token_pdtt');
         }
 
+        function formatPenumpang(data) {
+            if (!data.id) {
+                return data.text;
+            }
+
+            var $rend = $('<div><h4></h4><span class="job"></span>&#47<span class="country"></span>&#47<span class="passport"></span></div>');
+
+            $rend.find('h4').text(data.text);
+            $rend.find('.job').text(data.job);
+            $rend.find('.country').text(data.country);
+            $rend.find('.passport').text(data.passport);
+
+            return $rend;
+        }
+
         $(function() {
 			
             // select2
-			$('#penumpang').val('13');
             $('#penumpang').select2({
+                templateResult: formatPenumpang,
                 ajax: {
                     delay: 200,
-                    url: 'http://apishinta.test/penumpang',
+                    url: 'http://192.168.146.23/apishinta/public/penumpang',
                     type : 'GET',
                     data: function (params) {
                         console.log(params);
@@ -113,6 +133,9 @@
                         var transformed = $.map(data.data, function (elem) {
                             elem.id = elem.id;
                             elem.text = elem.nama;
+                            elem.country = elem.kebangsaan;
+                            elem.passport = elem.no_paspor;
+                            elem.job = elem.pekerjaan;
 
                             return elem;
                         });
@@ -128,7 +151,7 @@
             // untuk data kurs
             $('#kurs-table').DataTable({
                 'ajax'  : {
-                    'url' : "http://apishinta.test/kurs",
+                    'url' : "http://192.168.146.23/apishinta/public/kurs",
                     'type' : 'GET',
                     'processData' : false
                     },
@@ -149,7 +172,7 @@
                     searchPlaceholder: "nama/asal/no paspor/job..."
                 },
                 'ajax' : {
-                    'url' : 'http://apishinta.test/penumpang',
+                    'url' : 'http://192.168.146.23/apishinta/public/penumpang',
                     'type': 'GET',
                     'crossDomain' : true,
                     'data' : function (d) {
