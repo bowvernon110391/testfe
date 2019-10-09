@@ -16,6 +16,10 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+        <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script> -->
+
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" >
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" ></script>
 
@@ -37,7 +41,7 @@
                         </tr>
                     </thead>
                 </table>
-                <button class="btn-sm btn-primary">Some thing</button>
+                <button class="btn btn-sm btn-primary">Some thing</button>
             </div>
             <div class="col-md-6 col-sm-12">
                 <h4>Data Penumpang</h4>
@@ -55,7 +59,7 @@
                         </tbody>
                     </thead>
                 </table>
-                <button class="btn-sm btn-primary">Some other thing</button>
+                <button class="btn btn-sm btn-primary">Some other thing</button>
             </div>
         </div>
 
@@ -72,7 +76,7 @@
                     <select id="penumpang" class="col-lg-4">
 						
                     </select>
-                    <button class="btn-sm btn-primary">+</button>
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="modal" data-target="#modalInputPenumpang">+</button>
                 </p>
 
                 <p>
@@ -89,6 +93,38 @@
                 
             </div>
         </div>
+
+        <div class="container">
+                <div class="modal fade" id="modalInputPenumpang" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+        
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="modalInputPenumpangLabel">Input Data Penumpang Baru</h4>
+                            </div>
+        
+                            <div class="modal-body">
+                                <div class="container">
+                                    <label class="col-sm-2">
+                                        Nama
+                                        <input class="input col-sm-10" name="nama" />
+                                    </label>
+                                </div>
+                            </div>
+        
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-sm btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        
+
     </body>
 
     <script>
@@ -162,7 +198,8 @@
                     { 'data': 'tanggal_awal', 'orderable' : false },
                     { 'data': 'tanggal_akhir', 'orderable' : false },
                 ],
-                'searching' : false
+                'searching' : false,
+                'lengthMenu' : [[25, 30, -1], [25, 30, "All"]]
             });
 
             // untuk data penumpang
